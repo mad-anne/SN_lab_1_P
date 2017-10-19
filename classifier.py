@@ -80,6 +80,7 @@ class Adaline(BinaryClassifier):
 
     def learn_epoch(self, data_set):
         errors_sum = 0
+        self.curr_mse = 0
         for data in data_set:
             net = self.get_net(data.data)
             error = self.get_error(output=net, label=data.label)
