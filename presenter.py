@@ -5,14 +5,15 @@ import matplotlib.pyplot as plt
 
 def present_variants(
         data_sets, classifiers, validations, epochs, data_size, weights_deviation, train_part, validate_part,
-        test_part, accuracies):
+        test_part, accuracies, take_user_inputs):
     for logic_func, data_set in data_sets.items():
         for label, classifier in classifiers.items():
             print("\nLearning %s with %s" % (logic_func, label))
             present(
                 classifier, label, logic_func, validations, epochs, data_set, data_size, weights_deviation, train_part,
                 validate_part, test_part, accuracies)
-            process_user_inputs(classifier)
+            if take_user_inputs:
+                process_user_inputs(classifier)
 
 
 def present(

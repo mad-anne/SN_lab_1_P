@@ -22,6 +22,7 @@ test_part = params["testingSetPart"]
 show_plots = params["showPlots"]
 research_alphas = params["researchAlpha"]
 research_weights = params["researchWeights"]
+take_user_inputs = params["takeUserInputs"]
 
 print(
     "\nParameters: alpha = %.2f, epochs = %d, weights deviation = %.2f"
@@ -55,11 +56,11 @@ if research_weights:
     for weights_deviation in weights_deviations:
         present_variants(
             data_sets_unipolar, classifiers_unipolar, validations, epochs, data_size, weights_deviation, train_part,
-            validate_part, test_part, accuracies)
+            validate_part, test_part, accuracies, take_user_inputs)
 
         present_variants(
             data_sets_bipolar, classifiers_bipolar, validations, epochs, data_size, weights_deviation, train_part,
-            validate_part, test_part, accuracies)
+            validate_part, test_part, accuracies, take_user_inputs)
 
     if show_plots:
         labels = ['%.2f' % w for w in weights_deviations]
@@ -84,32 +85,34 @@ if research_alphas:
 
         present_variants(
             data_sets_unipolar, classifiers_unipolar, validations, epochs, data_size, weights_deviation, train_part,
-            validate_part, test_part, accuracies)
+            validate_part, test_part, accuracies, take_user_inputs)
 
         present_variants(
             data_sets_bipolar, classifiers_bipolar, validations, epochs, data_size, weights_deviation, train_part,
-            validate_part, test_part, accuracies)
+            validate_part, test_part, accuracies, take_user_inputs)
 
     if show_plots:
         labels = ['%.2f' % w for w in alphas]
         show_accuracies_plot(accuracies, labels)
 
-accuracies = {}
 
-classifiers_unipolar = {
-    "Unipolar Perceptron": Perceptron(alpha=alpha, bias=bias, act_func=UnipolarStepFunction()),
-    "Unipolar Adaline": Adaline(alpha=alpha, bias=bias, min_mse=min_mse, act_func=UnipolarStepFunction())
-}
+if take_user_inputs:
+    accuracies = {}
 
-classifiers_bipolar = {
-    "Bipolar Perceptron": Perceptron(alpha=alpha, bias=bias, act_func=BipolarStepFunction()),
-    "Bipolar Adaline": Adaline(alpha=alpha, bias=bias, min_mse=min_mse, act_func=BipolarStepFunction())
-}
+    classifiers_unipolar = {
+        "Unipolar Perceptron": Perceptron(alpha=alpha, bias=bias, act_func=UnipolarStepFunction()),
+        "Unipolar Adaline": Adaline(alpha=alpha, bias=bias, min_mse=min_mse, act_func=UnipolarStepFunction())
+    }
 
-present_variants(
-    data_sets_unipolar, classifiers_unipolar, validations, epochs, data_size, weights_deviation, train_part,
-    validate_part, test_part, accuracies)
+    classifiers_bipolar = {
+        "Bipolar Perceptron": Perceptron(alpha=alpha, bias=bias, act_func=BipolarStepFunction()),
+        "Bipolar Adaline": Adaline(alpha=alpha, bias=bias, min_mse=min_mse, act_func=BipolarStepFunction())
+    }
 
-present_variants(
-    data_sets_bipolar, classifiers_bipolar, validations, epochs, data_size, weights_deviation, train_part,
-    validate_part, test_part, accuracies)
+    present_variants(
+        data_sets_unipolar, classifiers_unipolar, validations, epochs, data_size, weights_deviation, train_part,
+        validate_part, test_part, accuracies, take_user_inputs)
+
+    present_variants(
+        data_sets_bipolar, classifiers_bipolar, validations, epochs, data_size, weights_deviation, train_part,
+        validate_part, test_part, accuracies, take_user_inputs)
