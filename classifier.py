@@ -19,6 +19,9 @@ class BinaryClassifier(ABC):
         else:
             print('Learned in %s epochs' % epochs)
 
+    def validate(self, data_set, act_func):
+        return sum([self.predict(d, act_func) == d.label for d in data_set]) / len(data_set)
+
     def get_net(self, data):
         return sum([x * w for x, w in zip(data, self.weights)]) + self.w0 * self.bias
 

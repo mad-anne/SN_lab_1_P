@@ -1,0 +1,14 @@
+{
+  "alpha": 0.01,
+  "epochs": 100,
+  "minMSE": 0.064,
+  "bias": 1.0,
+  "randomWeightsDeviation": 0.1,
+  "dataSize": 2,
+  "enlargeDataSetTimes": 100,
+  "enlargedDataSetMaxDeviation": 0.1,
+  "trainingSetPart": 0.7,
+  "validatingSetPart": 0.15,
+  "testingSetPart": 0.15,
+  "validations": 30
+}

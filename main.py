@@ -1,8 +1,19 @@
+import json
+
 from activation_function import UnipolarStepFunction
 from dataset import Data
 from classifier import Perceptron
 
-perceptron = Perceptron(alpha=0.1, bias=1.0)
+with open('parameters.json', 'r') as f:
+    params = json.loads(f.read())
+
+alpha = params["alpha"]
+bias = params["bias"]
+data_size = params["dataSize"]
+epochs = params["epochs"]
+weights_deviation = params["randomWeightsDeviation"]
+
+perceptron = Perceptron(alpha=alpha, bias=bias)
 
 data_set = [
     Data([0, 0], 0),
@@ -17,9 +28,7 @@ data_set = [
 
 act_func = UnipolarStepFunction()
 
-epochs = 10
-perceptron.init_random_weights(2, -0.2, 0.2)
+perceptron.init_random_weights(data_size, -weights_deviation, weights_deviation)
 perceptron.learn(epochs=epochs, data_set=data_set, act_func=act_func)
 
-for data in data_set:
-    print(perceptron.predict(data, act_func))
+print(perceptron.validate(data_set, act_func))
