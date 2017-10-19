@@ -1,7 +1,7 @@
 {
   "alpha": 0.01,
   "epochs": 100,
-  "minMSE": 0.05,
+  "minMSE": 0.06,
   "bias": 1.0,
   "randomWeightsDeviation": 0.1,
   "dataSize": 2,
@@ -10,5 +10,6 @@
   "trainingSetPart": 0.7,
   "validatingSetPart": 0.15,
   "testingSetPart": 0.15,
-  "validations": 30
+  "validations": 30,
+  "showPlots": true
 }

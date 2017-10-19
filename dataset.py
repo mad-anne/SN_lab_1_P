@@ -27,13 +27,13 @@ def split_data_set(data_set, train_part, validate_part, test_part):
 
 
 def enlarge_data_set(data_set, times, deviation):
-    def get_randomized_data(data, deviation):
+    def get_randomized_data(data):
         return Data([d + random.uniform(-deviation, deviation) for d in data.data], data.label)
 
     size = len(data_set)
     for i in range(size):
         for j in range(times):
-            data_set.append(get_randomized_data(data_set[i], deviation))
+            data_set.append(get_randomized_data(data_set[i]))
 
     random.shuffle(data_set)
     return data_set
