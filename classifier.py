@@ -35,6 +35,9 @@ class BinaryClassifier(ABC):
         self.weights = [random.uniform(-deviation, deviation) for i in range(size)]
         self.w0 = random.uniform(-deviation, deviation)
 
+    def get_data_size(self):
+        return len(self.weights)
+
     @abstractmethod
     def learn_epoch(self, data):
         pass

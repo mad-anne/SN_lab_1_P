@@ -1,4 +1,5 @@
 from classifier import cross_validation
+from dataset import Data
 import matplotlib.pyplot as plt
 
 
@@ -11,6 +12,7 @@ def present_variants(
             present(
                 classifier, label, logic_func, validations, epochs, data_set, data_size, weights_deviation, train_part,
                 validate_part, test_part, accuracies)
+            process_user_inputs(classifier)
 
 
 def present(
@@ -39,3 +41,19 @@ def show_accuracies_plot(accuracies, x_labels):
     axes = plt.gca()
     axes.set_ylim([0.0, 1.1])
     plt.show()
+
+
+def process_user_inputs(classifier):
+    while True:
+        print("\nGive your inputs to validate or press ENTER to continue")
+        values = classifier.get_data_size()
+        data = []
+        for i in range(values):
+            text = 'Enter value %s: ' % (i + 1)
+            _data = input(text)
+            if not _data:
+                return
+            data.append(float(_data))
+        predicted_value = classifier.predict(Data(data, None))
+        print('Predicted value: %s' % predicted_value)
+

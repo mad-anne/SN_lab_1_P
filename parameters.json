@@ -12,6 +12,6 @@
   "testingSetPart": 0.15,
   "validations": 30,
   "researchAlpha": false,
-  "researchWeights": true,
+  "researchWeights": false,
   "showPlots": true
 }
