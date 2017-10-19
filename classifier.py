@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import random
+from math import sqrt
 
 
 class BinaryClassifier(ABC):
@@ -14,10 +15,9 @@ class BinaryClassifier(ABC):
             weights_before = self.weights
             self.learn_epoch(data_set, act_func)
             if weights_before == self.weights or self.has_final_condition():
-                print('Learned in %s epochs' % (epoch + 1))
-                break
+                return epoch + 1
         else:
-            print('Learned in %s epochs' % epochs)
+            return epochs
 
     def validate(self, data_set, act_func):
         return sum([self.predict(d, act_func) == d.label for d in data_set]) / len(data_set)
@@ -28,9 +28,9 @@ class BinaryClassifier(ABC):
     def predict(self, data, act_func):
         return act_func.get_output(self.get_net(data.data))
 
-    def init_random_weights(self, size, min_val, max_val):
-        self.weights = [random.uniform(min_val, max_val) for i in range(size)]
-        self.w0 = random.uniform(min_val, max_val)
+    def init_random_weights(self, size, deviation):
+        self.weights = [random.uniform(-deviation, deviation) for i in range(size)]
+        self.w0 = random.uniform(-deviation, deviation)
 
     @abstractmethod
     def learn_epoch(self, data, act_func):
@@ -94,3 +94,20 @@ class Adaline(BinaryClassifier):
 
     def has_final_condition(self):
         return self.curr_mse <= self.min_mse
+
+
+def cross_validation(classifier, validations, epochs, data_set, act_func, data_size, deviation):
+    epochs_sum = 0
+    accuracy_sum = 0
+    deviations = []
+    for v in range(validations):
+        classifier.init_random_weights(data_size, deviation)
+        epochs_sum += classifier.learn(epochs=epochs, data_set=data_set, act_func=act_func)
+        deviations.append(classifier.validate(data_set, act_func))
+        accuracy_sum += deviations[-1]
+    result = {}
+    accuracy = accuracy_sum / validations
+    result['accuracy'] = accuracy
+    result['epochs'] = epochs / validations
+    result['deviation'] = sqrt(sum([pow(d - accuracy, 2) for d in deviations]) / validations)
+    return result
