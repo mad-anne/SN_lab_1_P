@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import random
 from math import sqrt
 
+from dataset import split_data_set
+
 
 class BinaryClassifier(ABC):
     def __init__(self, alpha, bias):
@@ -96,15 +98,19 @@ class Adaline(BinaryClassifier):
         return self.curr_mse <= self.min_mse
 
 
-def cross_validation(classifier, validations, epochs, data_set, act_func, data_size, deviation):
+def cross_validation(classifier, validations, epochs, data_set, act_func, data_size, deviation, train_part, validate_part, test_part):
     epochs_sum = 0
     accuracy_sum = 0
     deviations = []
+
     for v in range(validations):
+        random.shuffle(data_set)
+        train_set, validate_set, test_set = split_data_set(data_set, train_part, validate_part, test_part)
         classifier.init_random_weights(data_size, deviation)
-        epochs_sum += classifier.learn(epochs=epochs, data_set=data_set, act_func=act_func)
-        deviations.append(classifier.validate(data_set, act_func))
+        epochs_sum += classifier.learn(epochs=epochs, data_set=train_set, act_func=act_func)
+        deviations.append(classifier.validate(validate_set, act_func))
         accuracy_sum += deviations[-1]
+
     result = {}
     accuracy = accuracy_sum / validations
     result['accuracy'] = accuracy
