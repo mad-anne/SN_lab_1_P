@@ -1,7 +1,7 @@
 {
   "alpha": 0.01,
   "epochs": 100,
-  "minMSE": 0.064,
+  "minMSE": 0.05,
   "bias": 1.0,
   "randomWeightsDeviation": 0.1,
   "dataSize": 2,

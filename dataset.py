@@ -36,3 +36,4 @@ def enlarge_data_set(data_set, times, deviation):
             data_set.append(get_randomized_data(data_set[i], deviation))
 
     random.shuffle(data_set)
+    return data_set

@@ -6,36 +6,37 @@ from dataset import split_data_set
 
 
 class BinaryClassifier(ABC):
-    def __init__(self, alpha, bias):
+    def __init__(self, alpha, bias, act_func):
         self.alpha = alpha
         self.bias = bias
         self.weights = []
         self.w0 = 0.00
+        self.act_func = act_func
 
-    def learn(self, epochs, data_set, act_func):
+    def learn(self, epochs, data_set):
         for epoch in range(epochs):
             weights_before = self.weights
-            self.learn_epoch(data_set, act_func)
+            self.learn_epoch(data_set)
             if weights_before == self.weights or self.has_final_condition():
                 return epoch + 1
         else:
             return epochs
 
-    def validate(self, data_set, act_func):
-        return sum([self.predict(d, act_func) == d.label for d in data_set]) / len(data_set)
+    def validate(self, data_set):
+        return sum([self.predict(d) == d.label for d in data_set]) / len(data_set)
 
     def get_net(self, data):
         return sum([x * w for x, w in zip(data, self.weights)]) + self.w0 * self.bias
 
-    def predict(self, data, act_func):
-        return act_func.get_output(self.get_net(data.data))
+    def predict(self, data):
+        return self.act_func.get_output(self.get_net(data.data))
 
     def init_random_weights(self, size, deviation):
         self.weights = [random.uniform(-deviation, deviation) for i in range(size)]
         self.w0 = random.uniform(-deviation, deviation)
 
     @abstractmethod
-    def learn_epoch(self, data, act_func):
+    def learn_epoch(self, data):
         pass
 
     @abstractmethod
@@ -52,10 +53,10 @@ class BinaryClassifier(ABC):
 
 
 class Perceptron(BinaryClassifier):
-    def learn_epoch(self, data_set, act_func):
+    def learn_epoch(self, data_set):
         for data in data_set:
             net = self.get_net(data.data)
-            output = act_func.get_output(net)
+            output = self.act_func.get_output(net)
             error = self.get_error(output=output, label=data.label)
             self.update_weights(data.data, error)
 
@@ -72,12 +73,12 @@ class Perceptron(BinaryClassifier):
 
 
 class Adaline(BinaryClassifier):
-    def __init__(self, alpha, bias, min_mse):
-        super(Adaline, self).__init__(alpha, bias)
+    def __init__(self, alpha, bias, act_func, min_mse):
+        super(Adaline, self).__init__(alpha, bias, act_func)
         self.min_mse = min_mse
         self.curr_mse = min_mse + 1.0
 
-    def learn_epoch(self, data_set, act_func):
+    def learn_epoch(self, data_set):
         errors_sum = 0
         for data in data_set:
             net = self.get_net(data.data)
@@ -98,7 +99,7 @@ class Adaline(BinaryClassifier):
         return self.curr_mse <= self.min_mse
 
 
-def cross_validation(classifier, validations, epochs, data_set, act_func, data_size, deviation, train_part, validate_part, test_part):
+def cross_validation(classifier, validations, epochs, data_set, data_size, deviation, train_part, validate_part, test_part):
     epochs_sum = 0
     accuracy_sum = 0
     deviations = []
@@ -107,8 +108,8 @@ def cross_validation(classifier, validations, epochs, data_set, act_func, data_s
         random.shuffle(data_set)
         train_set, validate_set, test_set = split_data_set(data_set, train_part, validate_part, test_part)
         classifier.init_random_weights(data_size, deviation)
-        epochs_sum += classifier.learn(epochs=epochs, data_set=train_set, act_func=act_func)
-        deviations.append(classifier.validate(validate_set, act_func))
+        epochs_sum += classifier.learn(epochs=epochs, data_set=train_set)
+        deviations.append(classifier.validate(validate_set))
         accuracy_sum += deviations[-1]
 
     result = {}
